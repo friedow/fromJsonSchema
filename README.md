@@ -26,7 +26,7 @@ Aims to enable fast creation of nix modules which provide options for all config
          wrapperModules.markdownlint = wrappers.lib.wrapModule (
            { config, ... }:
            let
-             tomlFmt = config.pkgs.formats.json { };
+             jsonFmt = config.pkgs.formats.json { };
              jsonSchema = builtins.fromJSON (
                builtins.readFile (
                  builtins.fetchurl {
@@ -35,7 +35,6 @@ Aims to enable fast creation of nix modules which provide options for all config
                  }
                )
              );
-             markdownlintConfig = nixpkgs.lib.filterAttrsRecursive (_n: v: v != null) config.settings;
            in
            {
              options = {
@@ -43,7 +42,7 @@ Aims to enable fast creation of nix modules which provide options for all config
              };
              config = {
                package = nixpkgs.lib.mkDefault config.pkgs.markdownlint-cli;
-               flags."--config-file" = tomlFmt.generate "markdownlint.json" markdownlintConfig;
+               flags."--config-file" = jsonFmt.generate "markdownlint.json" config.settings;
              };
            }
          );
